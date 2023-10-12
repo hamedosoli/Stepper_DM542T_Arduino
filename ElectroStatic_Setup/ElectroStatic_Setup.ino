@@ -11,7 +11,7 @@ inline void pulse_gen(){
 
 }
 
-struct StepperDMt{
+struct StepperDM5{
    
    // motion settings
    float speed = 1; // mm/s
@@ -19,7 +19,7 @@ struct StepperDMt{
    char direction = 'T'; // with T, stage moves Toward the motor, with A, stage moves Away from the motor
    bool Run = false; // with false, stage stopps, with true, stage runs
    
-   // hardware 
+   // hardware config
    int microsteps = 200; // enter 
 
       struct stage {
@@ -34,14 +34,14 @@ int number_of_pulses (float distance, int microsteps, float pitch, float travel)
 
 }
 
-void manual_move (bool run , char direction){
-  if (Serial.available())
-  run = Serial.read();
-  direction = Serial.read();
-  action_run(run, direction);
-}
+// void command_move (){
+//   if (Serial.available())
+//   run = Serial.read();
+//   direction = Serial.read();
+//   action_run(run, direction);
+// }
 
-void action_run(bool run, char direction) {
+void manual_move(bool run, char direction) {
 
 int Enable;
 int dir;
@@ -58,6 +58,7 @@ dir = HIGH;
 else 
 dir = LOW;
 digitalWrite(Dir_N, dir);
+delayMicroseconds(10);
 pulse_gen();
 
 }
@@ -65,6 +66,7 @@ pulse_gen();
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+
   pinMode(Pul_N, OUTPUT);
   pinMode(Dir_N, OUTPUT);
   pinMode(En_N, OUTPUT);
@@ -72,5 +74,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-   manual_move(true, 'A');
+  struct StepperDM5 stepper1;
+  stepper1.Run = false;
+  stepper1.direction = 'A';
+  //stepper1.distance = Serialread();
+   manual_move(stepper1.Run, stepper1.direction);
 }
