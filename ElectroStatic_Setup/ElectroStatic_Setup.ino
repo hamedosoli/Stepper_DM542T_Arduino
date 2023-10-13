@@ -34,12 +34,17 @@ int number_of_pulses (float distance, int microsteps, float pitch, float travel)
 
 }
 
-// void command_move (){
-//   if (Serial.available())
-//   run = Serial.read();
-//   direction = Serial.read();
-//   action_run(run, direction);
-// }
+struct StepperDM5 serial_reader (struct StepperDM5* stepper){
+  if (Serial.available() > 0){
+
+      stepper->Run  = Serial.parseInt();
+      stepper->direction = Serial.read(); 
+      stepper->distance = Serial.parseFloat(); 
+      stepper->speed =Serial.parseFloat();
+
+  }
+  
+}
 
 void manual_move(bool run, char direction) {
 
@@ -75,8 +80,16 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   struct StepperDM5 stepper1;
-  stepper1.Run = false;
-  stepper1.direction = 'A';
+  serial_reader(&stepper1);
+  // Serial.println(stepper1.Run);
+  // Serial.println(stepper1.direction);
+  // Serial.println(stepper1.distance);
+  // Serial.println(stepper1.speed);
+    
+    Serial.println(Serial.available());
+
+  // stepper1.Run = false;
+  // stepper1.direction = 'A';
   //stepper1.distance = Serialread();
    manual_move(stepper1.Run, stepper1.direction);
 }
