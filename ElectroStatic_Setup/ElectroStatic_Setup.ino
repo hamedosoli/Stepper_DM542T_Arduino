@@ -14,16 +14,16 @@ inline void pulse_gen(){
 struct StepperDM5{
    
    // motion settings
-   float speed = 1; // mm/s
-   float distance = 2; // mm
-   char direction = 'T'; // with T, stage moves Toward the motor, with A, stage moves Away from the motor
+   //float speed = 1; // mm/s not interested in speed yet!
+   float distance = 0; // cm
+   char direction = 'A'; // with T, stage moves Toward the motor, with A, stage moves Away from the motor
    bool Run = true; // with false, stage stopps, with true, stage runs
    
    // hardware config
    int microsteps = 200; // enter 
 
   // stage_mechanics
-  float pitch = 0.5; // pitch in mm of the linear stage actuator
+  float pitch = 0.45; // pitch in cm of the linear stage actuator
   float travel = 50; // maximum travel possible
 
 } stepper1;
@@ -42,14 +42,11 @@ int number_of_pulses (float distance, int microsteps, float pitch, float travel)
 }
 
 void serial_reader (struct StepperDM5* stepper){
-  if (Serial.available() > 0){
-
+  
       stepper->Run  = Serial.parseInt();
       stepper->direction = Serial.read(); 
       stepper->distance = Serial.parseFloat(); 
-      stepper->speed =Serial.parseFloat();
-
-  }
+      //stepper->speed =Serial.parseFloat(); // not interested in speed yet!
   
 }
 
@@ -66,9 +63,9 @@ digitalWrite (En_N, Enable);
 delayMicroseconds(10);
 
 if (direction == 'T')
-dir = HIGH;
-else 
 dir = LOW;
+else 
+dir = HIGH;
 digitalWrite(Dir_N, dir);
 delayMicroseconds(10);
 
@@ -93,7 +90,9 @@ void setup() {
 
 void loop() {
   // put your main code here, to run repeatedly:
-  
+  if (Serial.available() > 0){
+   serial_reader(&stepper1);
+}
   //serial_reader(&stepper1);
   //  Serial.print("Run = ");
   //  Serial.println(stepper1.Run);
