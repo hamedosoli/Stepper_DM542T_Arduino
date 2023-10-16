@@ -15,26 +15,33 @@ struct StepperDM5{
    
    // motion settings
    float speed = 1; // mm/s
-   float distance = 1; // mm
+   float distance = 2; // mm
    char direction = 'T'; // with T, stage moves Toward the motor, with A, stage moves Away from the motor
-   bool Run = false; // with false, stage stopps, with true, stage runs
+   bool Run = true; // with false, stage stopps, with true, stage runs
    
    // hardware config
    int microsteps = 200; // enter 
 
-      struct stage {
-         float pitch = 0.5; // pitch in mm of the linear stage actuator
-         float travel = 50; // maximum travel possible
-         
-      };
-};
+  // stage_mechanics
+  float pitch = 0.5; // pitch in mm of the linear stage actuator
+  float travel = 50; // maximum travel possible
+
+} stepper1;
+
 
 int number_of_pulses (float distance, int microsteps, float pitch, float travel){
 
+       if (distance < travel)
+       {
+        
+           return (int((distance/pitch)*microsteps));
+       }
+
+       else {Serial.println("distance must be less than 50 cm");}
 
 }
 
-struct StepperDM5 serial_reader (struct StepperDM5* stepper){
+void serial_reader (struct StepperDM5* stepper){
   if (Serial.available() > 0){
 
       stepper->Run  = Serial.parseInt();
@@ -46,7 +53,7 @@ struct StepperDM5 serial_reader (struct StepperDM5* stepper){
   
 }
 
-void manual_move(bool run, char direction) {
+void manual_move(bool run, char direction, float distance, int microsteps, float pitch, float travel) {
 
 int Enable;
 int dir;
@@ -64,7 +71,13 @@ else
 dir = LOW;
 digitalWrite(Dir_N, dir);
 delayMicroseconds(10);
-pulse_gen();
+
+int pulses = number_of_pulses(distance, microsteps,pitch,travel);
+
+for (int i=0; i< pulses; i++)
+{
+  pulse_gen();
+}
 
 }
 
@@ -75,21 +88,22 @@ void setup() {
   pinMode(Pul_N, OUTPUT);
   pinMode(Dir_N, OUTPUT);
   pinMode(En_N, OUTPUT);
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  struct StepperDM5 stepper1;
-  serial_reader(&stepper1);
-  // Serial.println(stepper1.Run);
-  // Serial.println(stepper1.direction);
-  // Serial.println(stepper1.distance);
-  // Serial.println(stepper1.speed);
-    
-    Serial.println(Serial.available());
-
-  // stepper1.Run = false;
-  // stepper1.direction = 'A';
-  //stepper1.distance = Serialread();
-   manual_move(stepper1.Run, stepper1.direction);
+  
+  //serial_reader(&stepper1);
+  //  Serial.print("Run = ");
+  //  Serial.println(stepper1.Run);
+  //  Serial.print("direction = ");
+  //  Serial.println(stepper1.direction);
+  //  Serial.print("distance = ");
+  //  Serial.println(stepper1.distance);
+  //  Serial.print("speed = ");
+  //  Serial.println(stepper1.speed);
+  
+  manual_move(stepper1.Run, stepper1.direction,stepper1.distance, stepper1.microsteps, stepper1.pitch, stepper1.travel);
+  stepper1.Run = false;
 }
