@@ -79,7 +79,7 @@ for (int i=0; i< pulses; i++)
 }
 
 void setup() {
-  // put your setup code here, to run once:
+  
   Serial.begin(115200);
 
   pinMode(Pul_N, OUTPUT);
@@ -89,19 +89,10 @@ void setup() {
 }
 
 void loop() {
-  // put your main code here, to run repeatedly:
+  
   if (Serial.available() > 0){
    serial_reader(&stepper1);
 }
-  //serial_reader(&stepper1);
-  //  Serial.print("Run = ");
-  //  Serial.println(stepper1.Run);
-  //  Serial.print("direction = ");
-  //  Serial.println(stepper1.direction);
-  //  Serial.print("distance = ");
-  //  Serial.println(stepper1.distance);
-  //  Serial.print("speed = ");
-  //  Serial.println(stepper1.speed);
   
   manual_move(stepper1.Run, stepper1.direction,stepper1.distance, stepper1.microsteps, stepper1.pitch, stepper1.travel);
   stepper1.Run = false;
