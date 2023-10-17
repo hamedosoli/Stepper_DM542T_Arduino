@@ -11,6 +11,15 @@ inline void pulse_gen(){
 
 }
 
+inline void pulse_gen_speed(int delay){
+    
+    digitalWrite(Pul_N, HIGH);
+    delayMicroseconds(delay);
+    digitalWrite(Pul_N, LOW);
+    delayMicroseconds(delay);
+
+}
+
 struct StepperDM5{
    
    // motion settings
@@ -73,7 +82,8 @@ int pulses = number_of_pulses(distance, microsteps,pitch,travel);
 
 for (int i=0; i< pulses; i++)
 {
-  pulse_gen();
+  //pulse_gen();
+  pulse_gen_speed(180); // from 180 to 
 }
 
 }
