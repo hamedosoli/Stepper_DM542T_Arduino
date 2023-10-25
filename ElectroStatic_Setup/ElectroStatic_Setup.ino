@@ -24,7 +24,7 @@ struct StepperDM5{
    
    // motion settings
    //float speed = 1; // mm/s not interested in speed yet!
-   float distance = 0; // cm
+   float distance = -1.50; // cm
    char direction = 'A'; // with T, stage moves Toward the motor, with A, stage moves Away from the motor
    bool Run = true; // with false, stage stopps, with true, stage runs
    
@@ -32,8 +32,8 @@ struct StepperDM5{
    int microsteps = 200; // enter 
 
   // stage_mechanics
-  float pitch = 0.45; // pitch in cm of the linear stage actuator
-  float travel = 50; // maximum travel possible
+   float pitch = 0.525; // pitch in cm of the linear stage actuator is  0.525
+   float travel = 50; // maximum travel possible
 
 } stepper1;
 
@@ -41,9 +41,10 @@ struct StepperDM5{
 int number_of_pulses (float distance, int microsteps, float pitch, float travel){
 
        if (distance < travel)
-       {
-        
-           return (int((distance/pitch)*microsteps));
+       {   float adjusted_distance = 1.0526 * distance + 1.5789;        // 1.0934 is the linear offset slop at delay = 1 ms
+           float rotations = adjusted_distance / pitch;
+           float real_pulses = rotations * microsteps ; 
+           return (real_pulses);
        }
 
        else {Serial.println("distance must be less than 50 cm");}
@@ -83,7 +84,8 @@ int pulses = number_of_pulses(distance, microsteps,pitch,travel);
 for (int i=0; i< pulses; i++)
 {
   //pulse_gen();
-  pulse_gen_speed(180); // from 180 to 
+  pulse_gen_speed(200); // from 180 to 
+
 }
 
 }
